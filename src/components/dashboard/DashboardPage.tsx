@@ -164,9 +164,9 @@ export function DashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-slate-900 truncate">
-                      {iv.application?.company?.name ?? `応募 #${iv.application_id}`}
+                      {iv.company_name ?? `応募 #${iv.application_id}`}
                     </p>
-                    <p className="text-xs text-slate-500">{iv.application?.position}</p>
+                    <p className="text-xs text-slate-500">{iv.position}</p>
                   </div>
                   <p className="text-xs text-slate-400 shrink-0">{formatDate(iv.scheduled_at)}</p>
                 </div>
@@ -185,7 +185,7 @@ export function DashboardPage() {
               {recentApps.map((app) => (
                 <div key={app.id} className="flex items-center gap-4 text-sm py-1">
                   <p className="font-medium text-slate-900 w-40 truncate">
-                    {app.company?.name ?? `企業 #${app.company_id}`}
+                    {app.company_name}
                   </p>
                   <p className="text-slate-600 flex-1 truncate">{app.position}</p>
                   <Badge className={APPLICATION_STATUS_COLORS[app.status]}>

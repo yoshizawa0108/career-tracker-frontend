@@ -41,7 +41,7 @@ function AppForm({ initial, onSubmit, onCancel, loading }: AppFormProps) {
     position: initial?.position ?? "",
     status: initial?.status ?? "APPLIED",
     applied_at: initial?.applied_at?.slice(0, 10) ?? "",
-    notes: initial?.notes ?? "",
+    note: initial?.note ?? "",
     job_url: initial?.job_url ?? "",
   });
 
@@ -49,7 +49,7 @@ function AppForm({ initial, onSubmit, onCancel, loading }: AppFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => setForm((prev) => ({
     ...prev,
-    [field]: field === "company_id" ? e.target.value : e.target.value,
+    [field]: e.target.value,
   }));
 
   return (
@@ -62,7 +62,7 @@ function AppForm({ initial, onSubmit, onCancel, loading }: AppFormProps) {
       <Select label="ステータス" options={ALL_STATUS_OPTIONS} value={form.status} onChange={set("status")} />
       <Input label="応募日" type="date" value={form.applied_at as string} onChange={set("applied_at")} />
       <Input label="求人URL" type="url" value={form.job_url} onChange={set("job_url")} placeholder="https://" />
-      <Textarea label="メモ" value={form.notes} onChange={set("notes")} />
+      <Textarea label="メモ" value={form.note} onChange={set("note")} />
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>キャンセル</Button>
         <Button type="submit" loading={loading}>{initial ? "更新" : "登録"}</Button>
@@ -95,7 +95,7 @@ export function ApplicationsPage() {
   const filtered = (applications ?? []).filter((a) => {
     const matchStatus = filterStatus === "" || a.status === filterStatus;
     const matchSearch =
-      (a.company?.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      a.company_name.toLowerCase().includes(search.toLowerCase()) ||
       a.position.toLowerCase().includes(search.toLowerCase());
     return matchStatus && matchSearch;
   });
@@ -167,7 +167,7 @@ export function ApplicationsPage() {
                     className={`${i !== filtered.length - 1 ? "border-b border-slate-50" : ""} hover:bg-slate-50/50`}
                   >
                     <td className="px-5 py-3.5 font-medium text-slate-900">
-                      {app.company?.name ?? `企業 #${app.company_id}`}
+                      {app.company_name}
                     </td>
                     <td className="px-5 py-3.5 text-slate-700">{app.position}</td>
                     <td className="px-5 py-3.5">
@@ -243,7 +243,7 @@ export function ApplicationsPage() {
       <ConfirmDialog
         open={deleteTarget !== null}
         title="この応募を削除しますか？"
-        description={`${deleteTarget?.company?.name ?? ""} / ${deleteTarget?.position ?? ""}`}
+        description={`${deleteTarget?.company_name ?? ""} / ${deleteTarget?.position ?? ""}`}
         loading={deleteMutation.status === "loading"}
         onConfirm={async () => {
           if (!deleteTarget) return;

@@ -23,26 +23,24 @@ export const APPLICATION_STATUS_COLORS: Record<ApplicationStatus, string> = {
 };
 
 export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
-  phone_screening: "電話スクリーニング",
-  technical: "技術面接",
-  hr: "人事面接",
-  executive: "役員面接",
-  final: "最終面接",
-  other: "その他",
+  CASUAL: "カジュアル面談",
+  FIRST: "一次面接",
+  SECOND: "二次面接",
+  FINAL: "最終面接",
 };
 
 export const INTERVIEW_RESULT_LABELS: Record<InterviewResult, string> = {
-  passed: "通過",
-  failed: "不合格",
-  pending: "結果待ち",
-  cancelled: "キャンセル",
+  PASSED: "通過",
+  FAILED: "不合格",
+  PENDING: "結果待ち",
+  CANCELLED: "キャンセル",
 };
 
 export const INTERVIEW_RESULT_COLORS: Record<InterviewResult, string> = {
-  passed: "bg-emerald-100 text-emerald-700",
-  failed: "bg-red-100 text-red-700",
-  pending: "bg-amber-100 text-amber-700",
-  cancelled: "bg-gray-100 text-gray-500",
+  PASSED: "bg-emerald-100 text-emerald-700",
+  FAILED: "bg-red-100 text-red-700",
+  PENDING: "bg-amber-100 text-amber-700",
+  CANCELLED: "bg-gray-100 text-gray-500",
 };
 
 export function formatDate(iso?: string): string {
@@ -63,4 +61,18 @@ export function formatDateTime(iso?: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+// UTC ISO文字列 → datetime-local input用のローカル時刻文字列 (YYYY-MM-DDTHH:mm)
+export function toLocalDateTimeInput(iso?: string): string {
+  if (!iso) return "";
+  const date = new Date(iso);
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+// datetime-local inputのローカル時刻文字列 → UTC ISO文字列
+export function toUtcIso(localDateTime?: string): string | undefined {
+  if (!localDateTime) return undefined;
+  return new Date(localDateTime).toISOString();
 }

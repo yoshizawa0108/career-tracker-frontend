@@ -11,6 +11,8 @@ import {
   INTERVIEW_RESULT_LABELS,
   INTERVIEW_RESULT_COLORS,
   formatDateTime,
+  toLocalDateTimeInput,
+  toUtcIso,
 } from "../../lib/utils";
 
 const TYPE_OPTIONS = Object.entries(INTERVIEW_TYPE_LABELS).map(([v, l]) => ({ value: v, label: l }));
@@ -38,16 +40,16 @@ function InterviewForm({
     { value: "", label: "応募を選択..." },
     ...(apps ?? []).map((a) => ({
       value: String(a.id),
-      label: `${a.company?.name ?? `#${a.company_id}`} / ${a.position}`,
+      label: `${a.company_name} / ${a.position}`,  
     })),
   ];
 
   const [form, setForm] = useState<InterviewCreate>({
     application_id: initial?.application_id ?? "",
-    interview_type: initial?.interview_type ?? "hr",
-    scheduled_at: initial?.scheduled_at?.slice(0, 16) ?? "",
+    interview_type: initial?.interview_type ?? "CASUAL",
+    scheduled_at: toLocalDateTimeInput(initial?.scheduled_at),
     result: initial?.result ?? undefined,
-    notes: initial?.notes ?? "",
+    memo: initial?.memo ?? "",
   });
 
   const set = (field: keyof InterviewCreate) => (
@@ -60,7 +62,13 @@ function InterviewForm({
 
   return (
     <form
-      onSubmit={async (e) => { e.preventDefault(); await onSubmit(form); }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await onSubmit({
+          ...form,
+          scheduled_at: toUtcIso(form.scheduled_at as string | undefined),
+        });
+      }}
       className="flex flex-col gap-4"
     >
       <Select
@@ -92,7 +100,7 @@ function InterviewForm({
         value={form.result ?? ""}
         onChange={set("result")}
       />
-      <Textarea label="メモ" value={form.notes ?? ""} onChange={set("notes")} />
+      <Textarea label="メモ" value={form.memo ?? ""} onChange={set("memo")} />
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>キャンセル</Button>
         <Button type="submit" loading={loading}>{initial ? "更新" : "登録"}</Button>
@@ -190,9 +198,9 @@ export function InterviewsPage() {
                   >
                     <td className="px-5 py-3.5">
                       <p className="font-medium text-slate-900">
-                        {iv.application?.company?.name ?? `応募 #${iv.application_id}`}
+                        {iv.company_name ?? `応募 #${iv.application_id}`}
                       </p>
-                      <p className="text-slate-500 text-xs mt-0.5">{iv.application?.position}</p>
+                      <p className="text-slate-500 text-xs mt-0.5">{iv.position}</p>
                     </td>
                     <td className="px-5 py-3.5 text-slate-700">
                       {INTERVIEW_TYPE_LABELS[iv.interview_type]}

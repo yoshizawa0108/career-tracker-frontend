@@ -11,18 +11,16 @@ export type ApplicationStatus =
   | "WITHDRAWN";
 
 export type InterviewType =
-  | "phone_screening"
-  | "technical"
-  | "hr"
-  | "executive"
-  | "final"
-  | "other";
+  | "CASUAL"
+  | "FIRST"
+  | "SECOND"
+  | "FINAL";
 
 export type InterviewResult =
-  | "passed"
-  | "failed"
-  | "pending"
-  | "cancelled";
+  | "PASSED"
+  | "FAILED"
+  | "PENDING"
+  | "CANCELLED";
 
 // ─── Company ──────────────────────────────────────────────────────────────────
 
@@ -50,11 +48,11 @@ export interface CompanyUpdate extends Partial<CompanyCreate> {}
 export interface Application {
   id: string;
   company_id: string;
-  company?: Company;
+  company_name: string;  
   position: string;
   status: ApplicationStatus;
   applied_at?: string;
-  notes?: string;
+  note?: string;         
   job_url?: string;
   created_at: string;
   updated_at: string;
@@ -65,7 +63,7 @@ export interface ApplicationCreate {
   position: string;
   status: ApplicationStatus;
   applied_at?: string;
-  notes?: string;
+  note?: string;
   job_url?: string;
 }
 
@@ -76,11 +74,12 @@ export interface ApplicationUpdate extends Partial<ApplicationCreate> {}
 export interface Interview {
   id: string;
   application_id: string;
-  application?: Application;
+  company_name: string;  
+  position: string;      
   interview_type: InterviewType;
   scheduled_at?: string;
   result?: InterviewResult;
-  notes?: string;
+  memo?: string;
   created_at: string;
   updated_at: string;
 }
@@ -90,7 +89,7 @@ export interface InterviewCreate {
   interview_type: InterviewType;
   scheduled_at?: string;
   result?: InterviewResult;
-  notes?: string;
+  memo?: string;
 }
 
 export interface InterviewUpdate extends Partial<InterviewCreate> {}

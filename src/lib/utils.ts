@@ -1,9 +1,9 @@
 import type { ApplicationStatus, InterviewType, InterviewResult } from "../types/api";
 
 export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
-  APPLIED: "応募済み",
-  DOCUMENT_SCREENING: "書類選考中",
-  INTERVIEW: "面接中",
+  APPLIED: "応募",
+  DOCUMENT_SCREENING: "書類選考",
+  INTERVIEW: "面接",
   FINAL_INTERVIEW: "最終面接",
   OFFER: "内定",
   REJECTED: "不合格",

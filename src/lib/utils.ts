@@ -1,4 +1,4 @@
-import type { ApplicationStatus, InterviewType, InterviewResult } from "../types/api";
+import type { ApplicationStatus, InterviewType } from "../types/api";
 
 export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
   APPLIED: "応募",
@@ -27,20 +27,6 @@ export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
   FIRST: "一次面接",
   SECOND: "二次面接",
   FINAL: "最終面接",
-};
-
-export const INTERVIEW_RESULT_LABELS: Record<InterviewResult, string> = {
-  PASSED: "通過",
-  FAILED: "不合格",
-  PENDING: "結果待ち",
-  CANCELLED: "キャンセル",
-};
-
-export const INTERVIEW_RESULT_COLORS: Record<InterviewResult, string> = {
-  PASSED: "bg-emerald-100 text-emerald-700",
-  FAILED: "bg-red-100 text-red-700",
-  PENDING: "bg-amber-100 text-amber-700",
-  CANCELLED: "bg-gray-100 text-gray-500",
 };
 
 export function formatDate(iso?: string): string {

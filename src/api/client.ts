@@ -8,7 +8,7 @@ import type {
   Interview,
   InterviewCreate,
   InterviewUpdate,
-  DashboardStats,
+  ApplicationDashboardResponse,
 } from "../types/api";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -80,5 +80,13 @@ export const interviewsApi = {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export const dashboardApi = {
-  stats: () => request<DashboardStats>("/dashboard"),
+  applications: (params?: { keyword?: string; status?: string; page?: number; limit?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.keyword) query.set("keyword", params.keyword);
+    if (params?.status) query.set("status", params.status);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
+    const qs = query.toString();
+    return request<ApplicationDashboardResponse>(`/dashboard/applications${qs ? `?${qs}` : ""}`);
+  },
 };

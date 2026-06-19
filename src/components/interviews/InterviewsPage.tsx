@@ -1,27 +1,19 @@
 import React, { useState, useCallback } from "react";
 import { interviewsApi, applicationsApi } from "../../api/client";
 import { useAsync, useMutation } from "../../hooks/useAsync";
-import type { Interview, InterviewCreate, InterviewType, InterviewResult } from "../../types/api";
+import type { Interview, InterviewCreate, InterviewType } from "../../types/api";
 import {
   Button, Card, Modal, Select, Textarea,
   Badge, EmptyState, Spinner, ConfirmDialog,
 } from "../ui/Index";
 import {
   INTERVIEW_TYPE_LABELS,
-  INTERVIEW_RESULT_LABELS,
-  INTERVIEW_RESULT_COLORS,
   formatDateTime,
   toLocalDateTimeInput,
   toUtcIso,
 } from "../../lib/utils";
 
 const TYPE_OPTIONS = Object.entries(INTERVIEW_TYPE_LABELS).map(([v, l]) => ({ value: v, label: l }));
-const RESULT_OPTIONS = [
-  { value: "", label: "結果を選択..." },
-  ...Object.entries(INTERVIEW_RESULT_LABELS).map(([v, l]) => ({ value: v, label: l })),
-];
-
-// ─── Form ─────────────────────────────────────────────────────────────────────
 
 function InterviewForm({
   initial,
@@ -40,7 +32,7 @@ function InterviewForm({
     { value: "", label: "応募を選択..." },
     ...(apps ?? []).map((a) => ({
       value: String(a.id),
-      label: `${a.company_name} / ${a.position}`,  
+      label: `${a.company_name} / ${a.position}`,
     })),
   ];
 
@@ -48,7 +40,6 @@ function InterviewForm({
     application_id: initial?.application_id ?? "",
     interview_type: initial?.interview_type ?? "CASUAL",
     scheduled_at: toLocalDateTimeInput(initial?.scheduled_at),
-    result: initial?.result ?? undefined,
     memo: initial?.memo ?? "",
   });
 
@@ -57,7 +48,7 @@ function InterviewForm({
   ) =>
     setForm((prev) => ({
       ...prev,
-      [field]: field === "application_id" ? e.target.value : e.target.value || undefined,
+      [field]: e.target.value || undefined,
     }));
 
   return (
@@ -94,12 +85,6 @@ function InterviewForm({
           className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
         />
       </div>
-      <Select
-        label="結果"
-        options={RESULT_OPTIONS}
-        value={form.result ?? ""}
-        onChange={set("result")}
-      />
       <Textarea label="メモ" value={form.memo ?? ""} onChange={set("memo")} />
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>キャンセル</Button>
@@ -108,8 +93,6 @@ function InterviewForm({
     </form>
   );
 }
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function InterviewsPage() {
   const { status, data: interviews, error, refetch } = useAsync(
@@ -140,7 +123,7 @@ export function InterviewsPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">面接</h1>
-          <p className="text-sm text-slate-500 mt-0.5">面接のスケジュールと結果を記録します</p>
+          <p className="text-sm text-slate-500 mt-0.5">面接のスケジュールを記録します</p>
         </div>
         <Button onClick={() => { setSelected(null); setModal("create"); }}>
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -186,7 +169,6 @@ export function InterviewsPage() {
                   <th className="px-5 py-3.5 font-medium text-slate-500">企業 / 職種</th>
                   <th className="px-5 py-3.5 font-medium text-slate-500">種別</th>
                   <th className="px-5 py-3.5 font-medium text-slate-500">日時</th>
-                  <th className="px-5 py-3.5 font-medium text-slate-500">結果</th>
                   <th className="px-5 py-3.5" />
                 </tr>
               </thead>
@@ -206,15 +188,6 @@ export function InterviewsPage() {
                       {INTERVIEW_TYPE_LABELS[iv.interview_type]}
                     </td>
                     <td className="px-5 py-3.5 text-slate-500">{formatDateTime(iv.scheduled_at)}</td>
-                    <td className="px-5 py-3.5">
-                      {iv.result ? (
-                        <Badge className={INTERVIEW_RESULT_COLORS[iv.result]}>
-                          {INTERVIEW_RESULT_LABELS[iv.result]}
-                        </Badge>
-                      ) : (
-                        <span className="text-slate-300 text-xs">—</span>
-                      )}
-                    </td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-1 justify-end">
                         <Button

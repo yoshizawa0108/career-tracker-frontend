@@ -16,12 +16,6 @@ export type InterviewType =
   | "SECOND"
   | "FINAL";
 
-export type InterviewResult =
-  | "PASSED"
-  | "FAILED"
-  | "PENDING"
-  | "CANCELLED";
-
 // ─── Company ──────────────────────────────────────────────────────────────────
 
 export interface Company {
@@ -48,11 +42,11 @@ export interface CompanyUpdate extends Partial<CompanyCreate> {}
 export interface Application {
   id: string;
   company_id: string;
-  company_name: string;  
+  company_name: string;
   position: string;
   status: ApplicationStatus;
   applied_at?: string;
-  note?: string;         
+  note?: string;
   job_url?: string;
   created_at: string;
   updated_at: string;
@@ -74,11 +68,10 @@ export interface ApplicationUpdate extends Partial<ApplicationCreate> {}
 export interface Interview {
   id: string;
   application_id: string;
-  company_name: string;  
-  position: string;      
+  company_name: string;
+  position: string;
   interview_type: InterviewType;
   scheduled_at?: string;
-  result?: InterviewResult;
   memo?: string;
   created_at: string;
   updated_at: string;
@@ -88,7 +81,6 @@ export interface InterviewCreate {
   application_id: string;
   interview_type: InterviewType;
   scheduled_at?: string;
-  result?: InterviewResult;
   memo?: string;
 }
 
@@ -96,11 +88,18 @@ export interface InterviewUpdate extends Partial<InterviewCreate> {}
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
-export interface DashboardStats {
-  total_applications: number;
-  by_status: Record<ApplicationStatus, number>;
-  total_companies: number;
-  total_interviews: number;
-  offer_count: number;
-  rejection_count: number;
+export interface ApplicationDashboardItem {
+  company_id: string;
+  company_name: string;
+  application_id: string;
+  position: string;
+  status: ApplicationStatus;
+  interview_count: number;
+}
+
+export interface ApplicationDashboardResponse {
+  items: ApplicationDashboardItem[];
+  total: number;
+  page: number;
+  limit: number;
 }
